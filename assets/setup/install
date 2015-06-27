@@ -1,0 +1,59 @@
+#!/bin/bash
+set -e
+
+REDMINE_VERSION=2.3.4
+CENTOS_VERSION=6.6
+
+# add redmine user
+adduser -s /bin/false redmine -u 1000
+passwd -d redmine
+echo "redmine ALL=(ALL) ALL" >> /etc/sudoers.d/redmine
+
+# set PATH for redmine cron jobs
+cat > /tmp/cron.redmine <<EOF
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+EOF
+crontab -u redmine /tmp/cron.redmine
+rm -rf /tmp/cron.redmine
+
+# change conf/http.conf User and Group apache to redmine
+
+# setup log rotation for supervisord
+cat > /etc/logrotate.d/supervisord <<EOF
+/var/log/supervisor/*.log {
+    weekly
+    missingok
+    rotate 52
+    compress
+    delaycompress
+    notifempty
+    copytruncate
+}
+EOF
+
+cat >> /etc/supervisord.conf <<EOF
+[program:apache2]
+directory=/
+command=/usr/sbin/httpd -DFOREGROUND
+user=root
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/supervisor/%(program_name)s.log
+stderr_logfile=/var/log/supervisor/%(program_name)s_error.log
+
+EOF
+
+# configure supervisord to start cron
+cat >> /etc/supervisord.conf <<EOF
+[program:cron]
+priority=20
+directory=/tmp
+command=/usr/sbin/crond -f
+user=root
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/supervisor/%(program_name)s.log
+stderr_logfile=/var/log/supervisor/%(program_name)s.log
+
+EOF
+

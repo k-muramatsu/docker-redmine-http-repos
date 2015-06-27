@@ -1,0 +1,6 @@
+[wandisco-svn]
+name=WANDisco Repository - snv-1.8 centos6
+baseurl=http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/$basearch/
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-WANdisco
