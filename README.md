@@ -21,7 +21,7 @@ If you find this image useful here's how you can help:
 ```bash
 cd path/to/docker-redmine-http-repos
 docker build -t redmine-http-repos:2.3.4 .
-docker run --name=redmine-http-repos -d -p 10080:80 -e "DB_NAME=db_redmine" -e "DB_USER=user_redmine" -e "DB_PASS=pass_redmine" -e "DB_HOST=server" -v /var/repos/svn:/var/repos/svn -v /var/repos/git docker-http-repos:2.3.4
+docker run --name=redmine-http-repos -d -p 10080:80 -e "DB_NAME=db_redmine" -e "DB_USER=user_redmine" -e "DB_PASS=pass_redmine" -e "DB_HOST=server" -v /var/repos/svn:/var/repos/svn -v /var/repos/git:/var/repos/git docker-http-repos:2.3.4
 ```
 
 ## Available Configuration Parameters
