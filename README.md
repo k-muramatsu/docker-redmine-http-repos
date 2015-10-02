@@ -33,5 +33,5 @@ docker run --name=redmine-http-repos -d -p 10080:80 -e "DB_NAME=db_redmine" -e "
 - **DB_TYPE**: The database type. Possible values: `mysql`, `postgres`(Feature). Defaults to `mysql`.
 - **SVN_RELATIVE_URL_ROOT**: The relative URL root of SVN. Default to `/svn`.
 - **GIT_RELATIVE_URL_ROOT**: The relative URL root of SVN. Default to `/svn`.
-- **HTTPD_USER_ID**: User ID of HTTPD exec user. Default to `1000`.
-- **HTTPD_GROUP_ID**: Group ID of HTTPD exec group. Default to `1000`.
+- **USERMAP_UID**: User ID of HTTPD exec user. Default to `1000`.
+- **USERMAP_GID**: Group ID of HTTPD exec group. Default to `1000`.
