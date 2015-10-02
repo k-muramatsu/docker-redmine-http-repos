@@ -11,8 +11,17 @@ DB_PASS=${DB_PASS:-}
 DB_TYPE=${DB_TYPE:-mysql}
 SVN_RELATIVE_URL_ROOT=${SVN_RELATIVE_URL_ROOT:-/svn}
 GIT_RELATIVE_URL_ROOT=${GIT_RELATIVE_URL_ROOT:-/git}
-HTTPD_USER=${HTTPD_USER:-redmine}
-HTTPD_GROUP=${HTTPD_GROUP:-redmine}
+
+## Adapt uid and gid for redmine:redmine
+USERMAP_ORIG_UID=$(id -u redmine)
+USERMAP_ORIG_GID=$(id -g redmine)
+USERMAP_GID=${USERMAP_GID:-${USERMAP_UID:-$USERMAP_ORIG_GID}}
+USERMAP_UID=${USERMAP_UID:-$USERMAP_ORIG_UID}
+if [[ ${USERMAP_UID} != ${USERMAP_ORIG_UID} ]] || [[ ${USERMAP_GID} != ${USERMAP_ORIG_GID} ]]; then
+  echo "Adapting uid and gid for redmine:redmine to $USERMAP_UID:$USERMAP_GID"
+  groupmod -g ${USERMAP_GID} ${REDMINE_USER}
+  sed -i -e "s/:${USERMAP_ORIG_UID}:${USERMAP_GID}:/:${USERMAP_UID}:${USERMAP_GID}:/" /etc/passwd
+fi
 
 # is a mysql or postgresql database linked?
 # requires that the mysql or postgresql containers have exposed
@@ -86,8 +95,8 @@ sed 's/{{DB_PASS}}/'"${DB_PASS}"'/' -i ${HTTP_CONFD_DIR}/redmine_scm.conf
 sed 's,{{SVN_RELATIVE_URL_ROOT}},'"${SVN_RELATIVE_URL_ROOT}"',' -i ${HTTP_CONFD_DIR}/redmine_scm.conf
 sed 's,{{GIT_RELATIVE_URL_ROOT}},'"${GIT_RELATIVE_URL_ROOT}"',' -i ${HTTP_CONFD_DIR}/redmine_scm.conf
 
-sed 's,User apache,'"User ${HTTPD_USER}"',' -i ${HTTP_CONF_DIR}/httpd.conf
-sed 's,Group apache,'"Group ${HTTPD_GROUP}"',' -i ${HTTP_CONF_DIR}/httpd.conf
+sed 's,User apache,'"User redmine"',' -i ${HTTP_CONF_DIR}/httpd.conf
+sed 's,Group apache,'"Group redmine"',' -i ${HTTP_CONF_DIR}/httpd.conf
 
 exec /usr/bin/supervisord -n -c /etc/supervisord.conf
 
