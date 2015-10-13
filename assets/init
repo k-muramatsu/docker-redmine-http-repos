@@ -19,7 +19,7 @@ USERMAP_GID=${USERMAP_GID:-${USERMAP_UID:-$USERMAP_ORIG_GID}}
 USERMAP_UID=${USERMAP_UID:-$USERMAP_ORIG_UID}
 if [[ ${USERMAP_UID} != ${USERMAP_ORIG_UID} ]] || [[ ${USERMAP_GID} != ${USERMAP_ORIG_GID} ]]; then
   echo "Adapting uid and gid for redmine:redmine to $USERMAP_UID:$USERMAP_GID"
-  groupmod -g ${USERMAP_GID} ${REDMINE_USER}
+  groupmod -g ${USERMAP_GID} redmine
   sed -i -e "s/:${USERMAP_ORIG_UID}:${USERMAP_GID}:/:${USERMAP_UID}:${USERMAP_GID}:/" /etc/passwd
 fi
 
